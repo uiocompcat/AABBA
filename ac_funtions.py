@@ -2,7 +2,8 @@ from cmath import isinf, nan
 import networkx as nx # networkx to read and visualize
 import numpy as np
 from numpy import inf
-from graph_info import node_info, edge_info, new_edge_info, new_edge_attribute
+from graph_info import node_info, edge_info, new_edge_info, gp_new_edge_attribute, nbo_new_edge_attribute
+
 
 def atom_atom_MC(G, idx, depth_max, node_dict, feature_node, ac_operator, comp):
     """Apply the metal-centered atom-atom autocorrelation function ("MC")
@@ -40,7 +41,7 @@ def atom_atom_MC(G, idx, depth_max, node_dict, feature_node, ac_operator, comp):
 
         # remove NaN product
         if np.isnan(out_idx) or np.isinf(out_idx):
-            out_idx = 0 
+            out_idx = 0
         ac_vector.append(out_idx)
 
         for depth in range(depth_max + 1):
@@ -56,6 +57,7 @@ def atom_atom_MC(G, idx, depth_max, node_dict, feature_node, ac_operator, comp):
                     # set as cero the division of a number by cero
                     np.seterr(invalid='ignore')
                     item = comp[f'{ac_operator}'](float(idx_feature), float(node_feature))
+
                     feature_value = feature_value + item
 
                 # remove NaN product
@@ -125,7 +127,6 @@ def bond_bond_MC(G, depth_max, edge_dict, feature_edge, ac_operator, comp):
     Returns:
         list: Autocorrelation BB vector at a specified depth  (MC)
     """
-
     ac_vector, ac_vector_avg = [], []
 
     for feature in feature_edge:
@@ -175,6 +176,7 @@ def bond_bond_MC(G, depth_max, edge_dict, feature_edge, ac_operator, comp):
 
                     item = comp[f'{ac_operator}'](float(super_bond), float(edge_feature))
                     item_average = comp[f'{ac_operator}'](float(average_bond), float(edge_feature))
+
                     feature_value = feature_value + item
                     feature_value_avg = feature_value_avg + item_average
 
@@ -394,7 +396,7 @@ def bond_atom_F(G, depth_max, feature_node, feature_edge, ac_operator, comp):
 
     return full_ac_vector, full_ac_name
 
-def new_bond_bond_MC(G, depth_max, node_dict, edge_dict, model_number, ac_operator, comp):
+def new_gp_bond_bond_MC(G, depth_max, node_dict, edge_dict, model_number, ac_operator, comp):
     """Apply the new-bond-bond nBB autocorrelation function ("MC")
  
     Args:
@@ -411,14 +413,38 @@ def new_bond_bond_MC(G, depth_max, node_dict, edge_dict, model_number, ac_operat
     """
 
     # add new attributes to the edge entities
-    new_feature_edge = new_edge_attribute(G, model_number, node_dict)
+    new_feature_edge = gp_new_edge_attribute(G, model_number, node_dict)
 
     # compute the bond_bond autocorrelation function with the new atttributes
     ac_vector, ac_name, ac_vector_avg, ac_avg_name = bond_bond_MC(G, depth_max, edge_dict, new_feature_edge, ac_operator, comp)
 
-    return ac_vector, ac_name
+    return ac_vector_avg, ac_avg_name
 
-def new_bond_bond_F(G, depth_max, node_dict, model, ac_operator, comp):
+def new_nbo_bond_bond_MC(G, depth_max, node_dict, edge_dict, model_number, ac_operator, comp):
+    """Apply the new-bond-bond nBB autocorrelation function ("MC")
+ 
+    Args:
+        G (networkx graph class): Graph read by networkx
+        depth_max (int): Maximum depth to read the graph
+        node_dict (dict): Depth as keys and nodes as values
+        edge_dict (dict): Depth as keys and edges as values
+        model_number (int): Type of new edge attributes
+        ac_operator (str): Arithmetic operator applied to the properties
+        comp (dict): Arithmetic operator applied to the properties
+
+    Returns:
+        list: Autocorrelation vector nBB at a specified depth (MC)
+    """
+
+    # add new attributes to the edge entities
+    new_feature_edge = nbo_new_edge_attribute(G, model_number, node_dict)
+
+    # compute the bond_bond autocorrelation function with the new atttributes
+    ac_vector, ac_name, ac_vector_avg, ac_avg_name = bond_bond_MC(G, depth_max, edge_dict, new_feature_edge, ac_operator, comp)
+
+    return ac_vector_avg, ac_avg_name
+
+def new_gp_bond_bond_F(G, depth_max, node_dict, model, ac_operator, comp):
     """Apply the full new-bond-bond nBB autocorrelation function ("F")
 
     Args:
@@ -436,7 +462,7 @@ def new_bond_bond_F(G, depth_max, node_dict, model, ac_operator, comp):
 
     full_ac, full_ac_vector = [], []
 
-    new_edge_features = new_edge_attribute(G, model, node_dict)
+    new_edge_features = gp_new_edge_attribute(G, model, node_dict)
 
     for edge in G.edges():
 
@@ -455,6 +481,46 @@ def new_bond_bond_F(G, depth_max, node_dict, model, ac_operator, comp):
         #full_ac_vector.append(full_vector)
         full_ac_vector.append(sum(list(ind_vector)))
 
+        full_ac_name = full_ac_vector.copy()
+
+    full_ac_name.insert(0, G.graph['meta_data']['id'])
+
+    return full_ac_vector, full_ac_name
+
+def new_nbo_bond_bond_F(G, depth_max, node_dict, model, ac_operator, comp):
+    """Apply the full new-nbo-bond-bond nBB autocorrelation function ("F")
+
+    Args:
+        G (networkx graph class): Graph read by networkx
+        depth_max (int): Maximum depth to read the graph
+        node_dict (dict): Depth as keys and nodes as values
+        model_number (int): Type of new edge attributes
+        ac_operator (str): Arithmetic operator applied to the properties
+        comp (dict): Arithmetic operator applied to the properties
+
+
+    Returns:
+        list: Full autocorrelation vector nbo nBB at a specified depth (F)
+    """
+
+    full_ac, full_ac_vector = [], []
+
+    new_edge_features = nbo_new_edge_attribute(G, model, node_dict)
+
+    for edge in G.edges():
+
+        # select each edge index as starting edge
+        edge_dict = new_edge_info(G, depth_max, edge)
+
+        # compute and save autocorrelation products at specified depths
+        ac_vector, ac_name = bond_bond(G, edge, depth_max,  edge_dict, new_edge_features, ac_operator, comp)
+
+        full_ac.append(ac_vector)
+
+    for ind_vector in zip(*full_ac):
+
+        # sum the all vectors derived from each edge
+        full_ac_vector.append(sum(list(ind_vector)))
         full_ac_name = full_ac_vector.copy()
 
     full_ac_name.insert(0, G.graph['meta_data']['id'])

@@ -2,6 +2,7 @@ import numpy as np
 import csv
 import pandas as pd
 
+
 def round_numbers(value, feature):
     """Round the values according to their feature
 
@@ -47,7 +48,7 @@ def join_vectors(vectors, feature):
 
     return out_dict
 
-def round_csv(path, depth_max, ac_operator, walk):
+def round_csv(path, depth_max, ac_operator, walk, model_number):
     """Round the values of the csv file according to their feature
 
     Args:
@@ -56,20 +57,25 @@ def round_csv(path, depth_max, ac_operator, walk):
         ac_operator (str): Arithmetic operator applied to the properties
         walk (str): Type of autocorrelation to be performed
     """
-    df = pd.read_csv(path/f'{ac_operator}_{walk}_d{depth_max}.csv')
+    df = pd.read_csv(path/f'{ac_operator}_{walk}_d{depth_max}_{model_number}.csv', decimal = '.')
 
     # feature heading for node and edges PT and NBO properties
     one_decimal = ('Z-', 'I-', 'T-', 'Zi-', 'Zj-', 'Ti-', 'Tj-', 'Nlp-', \
-        'Nlv-', 'Nbn-', 'Nbn_-')
+        'Nlv-', 'Nlp_i-', 'Nlp_j-', 'Nlv_i-', 'Nlv_j-','Nbn-', 'Nbn_-')
+    
     three_decimal = ('S', 'chi', 'Si', 'Sj', 'chi_i', 'chi_j', 'Ns', 'Np', \
-        'Nd' )
+        'Nd', 'Ns_i', 'Np_i', 'Nd_i' ,'Ns_j', 'Np_j', 'Nd_j')
+    
     five_decimal = ('BO-')
-    six_decimal = ('qnat-', 'Vnat-','LPde-', 'LPe-', 'LPocc-', 'LPs-', \
-        'LPs-', 'LPp-', 'LPd-', 'LVde-', 'LVe-', 'LVocc-', 'LVs-', 'LVp-', 'LVd-', \
-        'BNde-','BNe-', 'BNocc-', 'BNs-', 'BNp-', 'BNd-', 'BNde_-', 'BNe_-', \
-        'BNocc_-', 'BNs_-', 'BNp_-', 'BNd_-')
-    seven_decimal = ('d-' , \
-                'Davg-', 'Aavg-')
+
+    six_decimal = ('qnat-', 'qnat_i-', 'qnat_j-','Vnat-','Vnat_i-', 'Vnat_j-', \
+        'LPde-', 'LPde_i-', 'LPde_j-', 'LPe_i-', 'LPe_j-', 'LPe-', 'LPocc-', \
+        'LPs-', 'LPs-', 'LPp-', 'LPd-', 'LVde-', 'LVde_i-', 'LVde_j-', \
+        'LVe-', 'LVe_i-', 'LVe_j-', 'LVocc-', 'LVs-', 'LVp-', 'LVd-',  \
+        'BNde-','BNe-', 'BNocc-', 'BNs-', 'BNp-', 'BNd-', \
+        'BNde_-', 'BNe_-', 'BNocc_-', 'BNs_-', 'BNp_-', 'BNd_-')
+    
+    seven_decimal = ('d-' , 'Davg-', 'Aavg-')
 
     for col in df.columns:
         if col.startswith(one_decimal):
@@ -84,9 +90,9 @@ def round_csv(path, depth_max, ac_operator, walk):
             df[col] = df[col].round(7)
 
     # save the rounded csv file
-    df.to_csv(path/f'{ac_operator}_{walk}_d{depth_max}.csv', index=False)
+    df.to_csv(path/f'{ac_operator}_{walk}_d{depth_max}_{model_number}.csv', index=False)
 
-def save_vectors(path, vectors, depth_max, ac_operator, walk):
+def save_vectors(path, vectors, depth_max, ac_operator, walk, model_number):
     """Save the list of vectors in a .csv file
 
     Args:
@@ -94,11 +100,13 @@ def save_vectors(path, vectors, depth_max, ac_operator, walk):
         depth_max (int): Maximum distance to read the graph
         ac_operator (str): Arithmetic operator applied to the properties
         walk (str): Type of autocorrelation to be performed
+        model_number (int): Number of the model to be saved (0, 1, 2, 3, 4, 5)
     """
     keys = vectors[0].keys()
 
-    with open(path/f'{ac_operator}_{walk}_d{depth_max}.csv', 'w', newline='') as f:
+    with open(path/f'{ac_operator}_{walk}_d{depth_max}_{model_number}.csv', 'w', newline='') as f:
         dict_writer = csv.DictWriter(f, fieldnames = keys)
         dict_writer.writeheader()
         dict_writer.writerows(vectors)
         f.close()
+

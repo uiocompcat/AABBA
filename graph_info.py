@@ -280,7 +280,7 @@ def new_edge_info(G, depth_max, idx_edge):
 
     return edge_dict
 
-def new_edge_attribute(G, model_number, node_dict):
+def gp_new_edge_attribute(G, model_number, node_dict):
     """Define new edge attributes according to the selected model
 
     Args:
@@ -376,6 +376,217 @@ def new_edge_attribute(G, model_number, node_dict):
 
     return newedge_attribute
 
+def nbo_new_edge_attribute(G, model_number, node_dict):
+    """Define new edge attributes according to the selected model for nbo properties
+
+    Args:
+        G (networkx graph class): Graph read by networkx
+        model_number (int): Type of new edge attribute
+        node_dict (dict): Depth as keys and nodes as values
+
+    Returns:
+        list: List of new edge features
+    """
+    # dictionary for new attributes
+    for edge in G.edges(G):
+
+        # sort nodes of in the edges by their depths (in node_dict)
+        node_i, node_j = edge
+
+        depth_a = [k for (k, v) in node_dict.items() if node_i in v]
+        depth_b = [k for (k, v) in node_dict.items() if node_j in v]
+
+        if depth_a < depth_b:
+            edge = node_i, node_j
+        if depth_b < depth_a:
+            edge = node_j, node_i
+
+        node1, node2 = edge
+
+        # get the new edge features
+        qnat_1 = G.nodes[node1]['feature_natural_atomic_charge']
+        qnat_2 = G.nodes[node2]['feature_natural_atomic_charge']
+        Vnat_1 = G.nodes[node1]['feature_natural_electron_population_valence']
+        Vnat_2 = G.nodes[node2]['feature_natural_electron_population_valence']
+        Ns_1 = G.nodes[node1]['feature_natural_electron_configuration_0']
+        Ns_2 = G.nodes[node2]['feature_natural_electron_configuration_0']
+        Np_1 = G.nodes[node1]['feature_natural_electron_configuration_1']
+        Np_2 = G.nodes[node2]['feature_natural_electron_configuration_1']
+        Nd_1 = G.nodes[node1]['feature_natural_electron_configuration_2']
+        Nd_2 = G.nodes[node2]['feature_natural_electron_configuration_2']
+        
+        Nlp_1 = G.nodes[node1]['feature_n_lone_pairs']
+        Nlp_2 = G.nodes[node2]['feature_n_lone_pairs']
+        LPe_1 = G.nodes[node1]['feature_lone_pair_max_energy']
+        LPe_2 = G.nodes[node2]['feature_lone_pair_max_energy']
+        LPde_1 = G.nodes[node1]['feature_lone_pair_energy_min_max_difference']
+        LPde_2 = G.nodes[node2]['feature_lone_pair_energy_min_max_difference']
+        Nlv_1 = G.nodes[node1]['feature_n_lone_vacancies']
+        Nlv_2 = G.nodes[node2]['feature_n_lone_vacancies']
+        LVde_1 = G.nodes[node1]['feature_lone_vacancy_energy_min_max_difference']
+        LVde_2 = G.nodes[node2]['feature_lone_vacancy_energy_min_max_difference']
+        LVe_1 = G.nodes[node1]['feature_lone_vacancy_min_energy']
+        LVe_2 = G.nodes[node2]['feature_lone_vacancy_min_energy']
+
+
+        # add new edge attributes
+        if model_number == 1:
+            new_attributes = {(node1, node2, 0): {"feature_natural_atomic_charge_1": qnat_1,
+                                    "feature_natural_atomic_charge_2": qnat_2,
+                                    "feature_natural_electron_configuration_0_1": Ns_1,
+                                    "feature_natural_electron_configuration_0_2": Ns_2,
+                                    "feature_natural_electron_configuration_1_1": Np_1,
+                                    "feature_natural_electron_configuration_1_2": Np_2,
+                                    "feature_natural_electron_configuration_2_1": Nd_1,
+                                    "feature_natural_electron_configuration_2_2": Nd_2,
+                                    "feature_n_lone_pairs_1": Nlp_1,
+                                    "feature_n_lone_pairs_2": Nlp_2                                    
+                                    }}
+
+            newedge_attribute = ["feature_natural_atomic_charge_1",
+                                "feature_natural_atomic_charge_2",
+                                "feature_natural_electron_configuration_0_1",
+                                "feature_natural_electron_configuration_0_2",
+                                "feature_natural_electron_configuration_1_1",
+                                "feature_natural_electron_configuration_1_2",
+                                "feature_natural_electron_configuration_2_1",
+                                "feature_natural_electron_configuration_2_2",
+                                "feature_n_lone_pairs_1",
+                                "feature_n_lone_pairs_2",
+                                "feature_wiberg_bond_order",
+                                "feature_n_bn",
+                                "feature_bond_max_energy",
+                                "feature_antibond_min_energy",
+                                "feature_bond_max_0",
+                                "feature_bond_max_1",
+                                "feature_bond_max_2",
+                                "feature_identity"]
+
+        if model_number == 2:
+            new_attributes = {(node1, node2, 0): {"feature_natural_electron_population_valence_1": Vnat_1,
+                                "feature_natural_electron_population_valence_2": Vnat_2,
+                                "feature_natural_electron_configuration_0_1": Ns_1,
+                                "feature_natural_electron_configuration_0_2": Ns_2,
+                                "feature_natural_electron_configuration_1_1": Np_1,
+                                "feature_natural_electron_configuration_1_2": Np_2,
+                                "feature_natural_electron_configuration_2_1": Nd_1,
+                                "feature_natural_electron_configuration_2_2": Nd_2,
+                                "feature_n_lone_pairs_1": Nlp_1,
+                                "feature_n_lone_pairs_2": Nlp_2                                    
+                                }}
+            
+            newedge_attribute = ["feature_natural_electron_population_valence_1",
+                                "feature_natural_electron_population_valence_2",
+                                "feature_natural_electron_configuration_0_1",
+                                "feature_natural_electron_configuration_0_2",
+                                "feature_natural_electron_configuration_1_1",
+                                "feature_natural_electron_configuration_1_2",
+                                "feature_natural_electron_configuration_2_1",
+                                "feature_natural_electron_configuration_2_2",
+                                "feature_n_lone_pairs_1",
+                                "feature_n_lone_pairs_2",
+                                "feature_wiberg_bond_order",
+                                "feature_n_bn",
+                                "feature_bond_max_energy",
+                                "feature_antibond_min_energy",
+                                "feature_bond_max_0",
+                                "feature_bond_max_1",
+                                "feature_bond_max_2",
+                                "feature_identity"]
+            
+        if model_number == 4:
+            new_attributes = {(node1, node2, 0): {"feature_natural_atomic_charge_1": qnat_1,
+                                    "feature_natural_atomic_charge_2": qnat_2,
+                                "feature_natural_electron_population_valence_1": Vnat_1,
+                                "feature_natural_electron_population_valence_2": Vnat_2,
+                                "feature_natural_electron_configuration_0_1": Ns_1,
+                                "feature_natural_electron_configuration_0_2": Ns_2,
+                                "feature_natural_electron_configuration_1_1": Np_1,
+                                "feature_natural_electron_configuration_1_2": Np_2,
+                                "feature_natural_electron_configuration_2_1": Nd_1,
+                                "feature_natural_electron_configuration_2_2": Nd_2,
+                                "feature_n_lone_pairs_1": Nlp_1,
+                                "feature_n_lone_pairs_2": Nlp_2,
+                                "feature_n_lone_vacancies_1": Nlv_1,
+                                "feature_n_lone_vacancies_2": Nlv_2
+                                }}
+            
+            newedge_attribute = ["feature_natural_atomic_charge_1",
+                                "feature_natural_atomic_charge_2",
+                                "feature_natural_electron_population_valence_1",
+                                "feature_natural_electron_population_valence_2",
+                                "feature_natural_electron_configuration_0_1",
+                                "feature_natural_electron_configuration_0_2",
+                                "feature_natural_electron_configuration_1_1",
+                                "feature_natural_electron_configuration_1_2",
+                                "feature_natural_electron_configuration_2_1",
+                                "feature_natural_electron_configuration_2_2",
+                                "feature_n_lone_pairs_1",
+                                "feature_n_lone_pairs_2",
+                                "feature_n_lone_vacancies_1",
+                                "feature_n_lone_vacancies_2",
+                                "feature_bond_distance",
+                                "feature_wiberg_bond_order",
+                                "feature_n_bn",
+                                "feature_bond_max_0",
+                                "feature_bond_max_1",
+                                "feature_bond_max_2",
+                                "feature_n_nbn",
+                                "feature_antibond_min_0",
+                                "feature_antibond_min_1",
+                                "feature_antibond_min_2",
+                                "feature_identity"]
+
+        if model_number == 5:
+            new_attributes = {(node1, node2, 0): {"feature_natural_atomic_charge_1": qnat_1,
+                                "feature_natural_atomic_charge_2": qnat_2,
+                                "feature_natural_electron_population_valence_1": Vnat_1,
+                                "feature_natural_electron_population_valence_2": Vnat_2,
+                                "feature_n_lone_pairs_1": Nlp_1,
+                                "feature_n_lone_pairs_2": Nlp_2,
+                                "feature_lone_pair_max_energy_1": LPe_1,
+                                "feature_lone_pair_max_energy_2": LPe_2,
+                                "feature_lone_pair_energy_min_max_difference_1": LPde_1,
+                                "feature_lone_pair_energy_min_max_difference_2": LPde_2,
+                                "feature_n_lone_vacancies_1": Nlv_1,
+                                "feature_n_lone_vacancies_2": Nlv_2,
+                                "feature_lone_vacancy_min_energy_1": LVe_1,
+                                "feature_lone_vacancy_min_energy_2": LVe_2,
+                                "feature_lone_vacancy_energy_min_max_difference_1": LVde_1,
+                                "feature_lone_vacancy_energy_min_max_difference_2": LVde_2,
+                                }}
+            
+            newedge_attribute = ["feature_natural_atomic_charge_1",
+                                "feature_natural_atomic_charge_2",
+                                "feature_natural_electron_population_valence_1",
+                                "feature_natural_electron_population_valence_2",
+                                "feature_n_lone_pairs_1",
+                                "feature_n_lone_pairs_2",
+                                "feature_lone_pair_max_energy_1",
+                                "feature_lone_pair_max_energy_2",
+                                "feature_lone_pair_energy_min_max_difference_1",
+                                "feature_lone_pair_energy_min_max_difference_2",
+                                "feature_n_lone_vacancies_1",
+                                "feature_n_lone_vacancies_2",
+                                "feature_lone_vacancy_min_energy_1",
+                                "feature_lone_vacancy_min_energy_2",
+                                "feature_lone_vacancy_energy_min_max_difference_1",
+                                "feature_lone_vacancy_energy_min_max_difference_2",
+                                "feature_bond_distance",
+                                "feature_wiberg_bond_order",
+                                "feature_n_bn",
+                                "feature_bond_max_energy",
+                                "feature_bond_energy_min_max_difference",
+                                "feature_n_nbn",
+                                "feature_antibond_min_energy",
+                                "feature_antibond_energy_min_max_difference",
+                                "feature_identity"]
+            
+        # add new edge attributes
+        nx.set_edge_attributes(G, new_attributes)
+
+    return newedge_attribute
+
 def vector_feature_PT(depth_max, ac_operator, model_number, walk):
     """Generate a set of labels for the PT features at different depths
 
@@ -411,18 +622,18 @@ def vector_feature_PT(depth_max, ac_operator, model_number, walk):
     BO =  [f'BO-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
     d =  [f'd-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
 
-    Zi =  [f'Zi-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    Zj =  [f'Zj-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    Ti =  [f'Ti-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    Tj =  [f'Tj-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    Xi =  [f'chi_i-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    Xj =  [f'chi_j-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    Xij =  [f'chi_ij-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    Si =  [f'Si-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    Sj =  [f'Sj-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    BO_ =  [f'BO-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    d_ =  [f'd-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
-    I_ =  [f'I-{i}_{ac_operator}_BB{model_number}' for i in range(depth_max + 1)]
+    Zi =  [f'Zi-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Zj =  [f'Zj-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Ti =  [f'Ti-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Tj =  [f'Tj-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Xi =  [f'chi_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Xj =  [f'chi_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Xij =  [f'chi_ij-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Si =  [f'Si-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Sj =  [f'Sj-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    BO_ =  [f'BO-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    d_ =  [f'd-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    I_ =  [f'I-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
 
     feature_node_depth = Z  + I + ND + CR + X
     feature_node_depth.insert(0, 'id')
@@ -449,12 +660,13 @@ def vector_feature_PT(depth_max, ac_operator, model_number, walk):
 
     return feature_set
 
-def vector_feature_NBO(depth_max, ac_operator, walk):
+def vector_feature_NBO(depth_max, ac_operator, model_number, walk):
     """Generate a set of labels for the NBO features at different depths
 
     Args:
         depth_max (int): Maximum distance to read the graph
         ac_operator (str): Arithmetic operator applied to the properties
+        model_number (int): Model number
         walk (str): Type of autocorrelation to be performed
 
     Returns:
@@ -519,9 +731,11 @@ def vector_feature_NBO(depth_max, ac_operator, walk):
                 'feature_acceptor_nbo_1',
                 'feature_acceptor_nbo_2',
                 'feature_identity']
-
+    
     feature_node_uNat_depth, feature_edge_uNat_depth = [], []
     feature_node_dNat_depth, feature_edge_dNat_depth = [], []
+    feature_new1_edge_uNat_depth, feature_new2_edge_uNat_depth = [], []
+    feature_new4_edge_uNat_depth, feature_new5_edge_uNat_depth = [], []
 
     # feature heading for node and edges with NBO properties
     Z =  [f'Z-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
@@ -581,6 +795,31 @@ def vector_feature_NBO(depth_max, ac_operator, walk):
     Ad =  [f'Ad-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
     Ade =  [f'Ade-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
 
+    qnat_i =  [f'qnat_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)] #    qnat_i =  [f'qnat_i-{i}_{ac_operator}_BB_{model_number}' for i in range(depth_max + 1)]
+    Vnat_i =  [f'Vnat_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Ns_i =  [f'Ns_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Np_i =  [f'Np_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Nd_i =  [f'Nd_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    qnat_j =  [f'qnat_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Vnat_j =  [f'Vnat_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Ns_j =  [f'Ns_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Np_j =  [f'Np_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Nd_j =  [f'Nd_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    
+    Nlp_i = [f'Nlp_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Nlp_j = [f'Nlp_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    LPe_i = [f'LPe_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    LPe_j = [f'LPe_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    LPde_i = [f'LPde_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    LPde_j = [f'LPde_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+
+    Nlv_i =  [f'Nlv_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    Nlv_j =  [f'Nlv_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    LVe_i = [f'LVe_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    LVe_j = [f'LVe_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    LVde_i = [f'LVde_i-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+    LVde_j = [f'LVde_j-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
+
     I =  [f'I-{i}_{ac_operator}_{walk}' for i in range(depth_max + 1)]
 
     feature_node_uNat_depth = Z + qnat + Vnat + Ns + Np + Nd + Nlp + \
@@ -601,12 +840,38 @@ def vector_feature_NBO(depth_max, ac_operator, walk):
         Ds + Dp + Dd + Ae + Ade + Aocc + As + Ap + Ad + I
     feature_edge_dNat_depth.insert(0, 'id')
 
+    feature_new1_edge_uNat_depth = qnat_i + qnat_j + Ns_i + Ns_j + \
+        Np_i + Np_j + Nd_i +  Nd_j + Nlp_i + Nlp_j + BO + Nbn + BNe + BNe_ + BNs + \
+        BNp + BNd + I
+    feature_new1_edge_uNat_depth.insert(0, 'id')
+
+    feature_new2_edge_uNat_depth = Vnat_i + Vnat_j + Ns_i + Ns_j + \
+        Np_i + Np_j + Nd_i +  Nd_j + Nlp_i + Nlp_j + BO + Nbn + BNe + BNe_ + BNs + \
+        BNp + BNd + I
+    feature_new2_edge_uNat_depth.insert(0, 'id')
+
+    feature_new4_edge_uNat_depth = qnat_i + qnat_j + Vnat_i + Vnat_j + \
+        Ns_i + Ns_j + Np_i + Np_j + Nd_i +  Nd_j + Nlp_i + Nlp_j + Nlv_i + Nlv_j + \
+        d + BO + Nbn + BNs + BNp + BNd + Nbn_ + BNs_ + BNp_ + BNd_ + I
+    feature_new4_edge_uNat_depth.insert(0, 'id')
+
+    feature_new5_edge_uNat_depth = qnat_i + qnat_j + Vnat_i + Vnat_j + \
+        Nlp_i + Nlp_j + LPe_i + LPe_j + LPde_i + LPde_j +  Nlv_i + Nlv_j + \
+        LVe_i + LVe_j + LVde_i + LVde_j + d + BO + Nbn + BNe + BNde + Nbn_ + \
+        BNe_ + BNde_ + I
+    feature_new5_edge_uNat_depth.insert(0, 'id')
+
     feature_set = [feature_node_uNat,
                   feature_edge_uNat,
                   feature_edge_dNat,
                   feature_node_uNat_depth,
                   feature_edge_uNat_depth,
                   feature_node_dNat_depth,
-                  feature_edge_dNat_depth]
-
+                  feature_edge_dNat_depth,
+                  feature_new1_edge_uNat_depth,
+                  feature_new2_edge_uNat_depth,
+                  feature_new4_edge_uNat_depth,
+                  feature_new5_edge_uNat_depth
+                  ]
+    
     return feature_set
