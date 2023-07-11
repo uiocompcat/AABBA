@@ -15,18 +15,18 @@ from ac_funtions import *
 from utilities import round_csv, save_vectors, join_vectors, round_numbers
 
 # parameters
-ac_operator = 'MD'
-model_number = 1 # nBB model (1, 2, 3)
+ac_operator = 'MA'
+model_number = 3 # nBB model for PT (1, 2, 3)
 depth_max = 8
-walk = 'AB' # AA, BBavg, BB, AB
+walk = 'ABBAavg' # AA, BBavg, BB, AB, ABBA
 
 def read_graph(file):
 
     # parameters (copy the same as above)
-    ac_operator = 'MD'
-    model_number = 1 # nBB model (1, 2, 3)
+    ac_operator = 'MA'
+    model_number = 3 # nBB model (1, 2, 3) for GP and (4, 5) for NBO properties
     depth_max = 8
-    walk = 'AB' # AA, BBavg, BB, AB
+    walk = 'ABBAavg' # AA, BBavg, BB, AB, ABBAavg, ABBA
 
     # computation dict
     comp_dict = {'MA': np.multiply,
@@ -78,13 +78,13 @@ def read_graph(file):
     #BB_AC_vector, BB_AC_vname, BB_AC_vector_avg, BB_AC_vname_avg  = bond_bond_MC(G, depth_max, edge_dict, feature_edge, ac_operator, comp_dict)
     #BB_FA_vector, BB_FA_vname = bond_bond_F(G, depth_max, feature_edge, ac_operator, comp_dict)
     
-    AB_AC_vector, AB_AC_vname = bond_atom_MC(G, indx, depth_max, edge_dict, feature_node, feature_edge, ac_operator, comp_dict)
+    #AB_AC_vector, AB_AC_vname = bond_atom_MC(G, indx, depth_max, edge_dict, feature_node, feature_edge, ac_operator, comp_dict)
     #AB_FA_vector, AB_FA_vname = bond_atom_F(G, depth_max, feature_node, feature_edge, ac_operator, comp_dict)
 
-    #nBB_AC_vector, nBB_AC_vname = new_bond_bond_MC(G, depth_max, node_dict, edge_dict, model_number, ac_operator, comp_dict)
-    #nBB_FA_vector, nBB_FA_vname = new_bond_bond_F(G, depth_max, node_dict, model_number, ac_operator, comp_dict)
+    nBB_AC_vector, nBB_AC_vname = new_gp_bond_bond_MC(G, depth_max, node_dict, edge_dict, model_number, ac_operator, comp_dict)
+    #nBB_FA_vector, nBB_FA_vname = new_gp_bond_bond_F(G, depth_max, node_dict, model_number, ac_operator, comp_dict)
 
-    return AB_AC_vname # return vector with the name of the graphs
+    return nBB_AC_vname # return vector with the name of the graphs
 
 if __name__ == "__main__":
 
@@ -115,8 +115,11 @@ if __name__ == "__main__":
                 #print(type(file), type(Path(file)))
                 gml_list.append(f'{file}')
 
+    # save maximum depth
+    #get_max_depth(gml_list)
+
     # create a process
-    with Pool(processes=12) as pool:
+    with Pool(processes=12-4) as pool:
         poolReturn = pool.map(read_graph, gml_list) #, depth_max, ac_operator, model_number, *feature_set)
 
     feature_set_PT = vector_feature_PT(depth_max, ac_operator, model_number, walk)
@@ -126,17 +129,17 @@ if __name__ == "__main__":
     feature_new1_edge_depth, feature_new2_edge_depth, feature_new3_edge_depth = feature_set_PT
 
     # select the feature type
-    feature_type = feature_node_depth
-
-    # join the vectors
-    out_dict = join_vectors(poolReturn, feature_type)
+    feature_type = feature_new3_edge_depth
 
     # save derived vectors in a .csv file
     print('Save vectors in a .csv file')
-    save_vectors(path_to_folder, out_dict, depth_max, ac_operator, walk)
+
+    # join the vectors and save vectors
+    out_dict = join_vectors(poolReturn, feature_type)
+    save_vectors(path_to_test, out_dict, depth_max, ac_operator, walk, model_number)
 
     # round features of the csv
-    round_csv(path_to_folder, depth_max, ac_operator, walk)
+    round_csv(path_to_test, depth_max, ac_operator, walk, model_number)
 
     print("Execution time: " + str(round((time.time() - start_time)/60, 4)) + \
         " minutes." + str(cpu_count()))
