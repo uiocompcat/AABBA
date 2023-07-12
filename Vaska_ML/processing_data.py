@@ -5,9 +5,45 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 
+#data = pd.read_csv('../ac_vectors_target.csv') #'./ac_vectors_target.csv')
 
-# standarize the data
-# remove the outlier (std = 0)
+#sub = data[['chi-2_ma', 'Z-2_ma', 'I-2_ma', 'T-2_ma', 'S-2_ma']]
+
+#features_input = ['Z-0_FA_AA', 'Z-1_FA_AA', 'Z-2_FA_AA', 'Z-3_FA_AA', 'Z-4_FA_AA', 'Z-5_FA_AA', 'Z-6_FA_AA', 'Z-7_FA_AA','Z-8_FA_AA', \
+#'I-0_FA_AA','I-1_FA_AA', 'I-2_FA_AA', 'I-3_FA_AA', 'I-4_FA_AA', 'I-5_FA_AA', 'I-6_FA_AA', 'I-7_FA_AA', 'I-8_FA_AA',\
+#'T-0_FA_AA', 'T-1_FA_AA', 'T-2_FA_AA', 'T-3_FA_AA', 'T-4_FA_AA',  'T-5_FA_AA', 'T-6_FA_AA', 'T-7_FA_AA', 'T-8_FA_AA', \
+#'S-0_FA_AA', 'S-1_FA_AA', 'S-2_FA_AA', 'S-3_FA_AA', 'S-4_FA_AA', 'S-5_FA_AA', 'S-6_FA_AA', 'S-7_FA_AA', 'S-8_FA_AA',\
+#'chi-0_FA_AA', 'chi-1_FA_AA', 'chi-2_FA_AA', 'chi-3_FA_AA', 'chi-4_FA_AA', 'chi-5_FA_AA', 'chi-6_FA_AA', 'chi-7_FA_AA', 'chi-8_FA_AA'] #['Z-0_MA_AA', 'Z-1_MA_AA', 'I-0_MA_AA', 'I-1_MA_AA', 'T-0_MA_AA', 'T-1_MA_AA', 'S-0_MA_AA', 'S-1_MA_AA','chi-0_MA_AA', 'chi-1_MA_AA']
+
+#features_input = ['Z-0_FA_AA', 'Z-1_FA_AA', 'Z-2_FA_AA',  \
+# 'I-0_MA_AA','I-1_FA_AA', 'I-2_FA_AA', \
+# 'T-0_FA_AA', 'T-1_FA_AA', 'T-2_FA_AA',  \
+#'S-0_FA_AA', 'S-1_FA_AA', 'S-2_FA_AA', \
+#'chi-0_FA_AA', 'chi-1_FA_AA', 'chi-2_FA_AA']
+
+#features_input = ['Z-0_FA_AA', 'Z-1_FA_AA', 'Z-2_FA_AA', 'Z-3_FA_AA', 'Z-4_FA_AA',  'Z-5_FA_AA',\
+# 'I-0_FA_AA','I-1_FA_AA', 'I-2_FA_AA', 'I-3_FA_AA', 'I-4_FA_AA', 'I-5_FA_AA', \
+# 'T-0_FA_AA', 'T-1_FA_AA', 'T-2_FA_AA', 'T-3_FA_AA', 'T-4_FA_AA','T-5_FA_AA', \
+#'S-0_FA_AA', 'S-1_FA_AA', 'S-2_FA_AA', 'S-3_FA_AA', 'S-4_FA_AA', 'S-5_FA_AA', \
+#'chi-0_FA_AA', 'chi-1_FA_AA', 'chi-2_FA_AA', 'chi-3_FA_AA', 'chi-4_FA_AA', 'chi-5_FA_AA']
+
+#sub = data[features_input]
+#sub_ = (sub-sub.mean())/sub.std()
+#sub_array = np.array(sub).T
+
+#target = data['homo_lumo_gap_delta']
+#target_array = np.array(target)
+
+#print(sub_array, '\n')
+#print(sub)
+#print(target_array, '\n')
+#
+#X_train, X_test, y_train, y_test = train_test_split(sub, target, test_size=0.2, random_state=2022, shuffle=True)
+#X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=2022, shuffle=True)
+
+#print(len(sub), len(X_train), len(X_test), len(X_val) )
+#print(X_train)
+
 def standarize_train(data_train):
 
     outlier = []
@@ -26,7 +62,6 @@ def standarize_train(data_train):
 
     return data_train, mean, std, outlier
 
-# standarize the validation and test set with the mean and std from the training set
 def standarize_rest(data, mean, std, outlier):
 
     data = data.drop(outlier, axis=1)
@@ -35,7 +70,6 @@ def standarize_rest(data, mean, std, outlier):
 
     return data
 
-# heading of features
 def vector_feature_PT(depth_max, ac_type, model_number, walk):
 
     feature_node = ['feature_atomic_number',
@@ -60,18 +94,18 @@ def vector_feature_PT(depth_max, ac_type, model_number, walk):
     BO =  [f'BO-{i}_{ac_type}_{walk}' for i in range(depth_max + 1)]
     d =  [f'd-{i}_{ac_type}_{walk}' for i in range(depth_max + 1)]
 
-    Zi =  [f'Zi-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    Zj =  [f'Zj-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    Ti =  [f'Ti-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    Tj =  [f'Tj-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    Xi =  [f'chi_i-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    Xj =  [f'chi_j-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    Xij =  [f'chi_ij-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    Si =  [f'Si-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    Sj =  [f'Sj-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    BO_ =  [f'BO-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    d_ =  [f'd-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
-    I_ =  [f'I-{i}_{ac_type}_BBavg{model_number}' for i in range(depth_max + 1)]
+    Zi =  [f'Zi-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]   #_BBavg{model_number}
+    Zj =  [f'Zj-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Ti =  [f'Ti-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Tj =  [f'Tj-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Xi =  [f'chi_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Xj =  [f'chi_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Xij =  [f'chi_ij-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Si =  [f'Si-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Sj =  [f'Sj-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    BO_ =  [f'BO-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    d_ =  [f'd-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    I_ =  [f'I-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
 
     feature_node_depth = Z  + I + ND + CR + X
     #feature_node_depth.insert(0, 'id')
@@ -99,7 +133,7 @@ def vector_feature_PT(depth_max, ac_type, model_number, walk):
     return feature_set
 
 
-def vector_feature_NBO(depth_max, ac_type, walk):
+def vector_feature_NBO(depth_max, ac_type, model_number, walk):
 
     feature_node_uNat = ['feature_atomic_number',
                 'feature_natural_atomic_charge',
@@ -162,8 +196,11 @@ def vector_feature_NBO(depth_max, ac_type, walk):
 
     feature_node_uNat_depth, feature_edge_uNat_depth = [], []
     feature_node_dNat_depth, feature_edge_dNat_depth = [], []
+    feature_new1_edge_uNat_depth, feature_new2_edge_uNat_depth = [], []
+    feature_new4_edge_uNat_depth, feature_new5_edge_uNat_depth = [], []
 
     # feature heading
+    # feature heading for node and edges with NBO properties
     Z =  [f'Z-{i}_{ac_type}_{walk}' for i in range(depth_max + 1)]
     qnat =  [f'qnat-{i}_{ac_type}_{walk}' for i in range(depth_max + 1)]
     Vnat =  [f'Vnat-{i}_{ac_type}_{walk}' for i in range(depth_max + 1)]
@@ -221,6 +258,31 @@ def vector_feature_NBO(depth_max, ac_type, walk):
     Ad =  [f'Ad-{i}_{ac_type}_{walk}' for i in range(depth_max + 1)]
     Ade =  [f'Ade-{i}_{ac_type}_{walk}' for i in range(depth_max + 1)]
 
+    qnat_i =  [f'qnat_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)] #    qnat_i =  [f'qnat_i-{i}_{ac_type}_ABBAavg_{model_number}' for i in range(depth_max + 1)]
+    Vnat_i =  [f'Vnat_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Ns_i =  [f'Ns_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Np_i =  [f'Np_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Nd_i =  [f'Nd_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    qnat_j =  [f'qnat_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Vnat_j =  [f'Vnat_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Ns_j =  [f'Ns_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Np_j =  [f'Np_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Nd_j =  [f'Nd_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    
+    Nlp_i = [f'Nlp_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Nlp_j = [f'Nlp_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    LPe_i = [f'LPe_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    LPe_j = [f'LPe_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    LPde_i = [f'LPde_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    LPde_j = [f'LPde_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+
+    Nlv_i =  [f'Nlv_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    Nlv_j =  [f'Nlv_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    LVe_i = [f'LVe_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    LVe_j = [f'LVe_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    LVde_i = [f'LVde_i-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+    LVde_j = [f'LVde_j-{i}_{ac_type}_ABBAavg' for i in range(depth_max + 1)]
+
     I =  [f'I-{i}_{ac_type}_{walk}' for i in range(depth_max + 1)]
 
     feature_node_uNat_depth = Z + qnat + Vnat + Ns + Np + Nd + Nlp + \
@@ -241,12 +303,57 @@ def vector_feature_NBO(depth_max, ac_type, walk):
         Ds + Dp + Dd + Ae + Ade + Aocc + As + Ap + Ad + I
     #feature_edge_dNat_depth.insert(0, 'id')
 
+    feature_new1_edge_uNat_depth = qnat_i + qnat_j + Ns_i + Ns_j + \
+        Np_i + Np_j + Nd_i +  Nd_j + Nlp_i + Nlp_j + BO + Nbn + BNe + BNe_ + BNs + \
+        BNp + BNd + I
+    #feature_new1_edge_uNat_depth.insert(0, 'id')
+
+    feature_new2_edge_uNat_depth = Vnat_i + Vnat_j + Ns_i + Ns_j + \
+        Np_i + Np_j + Nd_i +  Nd_j + Nlp_i + Nlp_j + BO + Nbn + BNe + BNe_ + BNs + \
+        BNp + BNd + I
+    #feature_new2_edge_uNat_depth.insert(0, 'id')
+
+    feature_new4_edge_uNat_depth = qnat_i + qnat_j + Vnat_i + Vnat_j + \
+        Ns_i + Ns_j + Np_i + Np_j + Nd_i +  Nd_j + Nlp_i + Nlp_j + Nlv_i + Nlv_j + \
+        d + BO + Nbn + BNs + BNp + BNd + Nbn_ + BNs_ + BNp_ + BNd_ + I
+    #feature_new4_edge_uNat_depth.insert(0, 'id')
+
+    feature_new5_edge_uNat_depth = qnat_i + qnat_j + Vnat_i + Vnat_j + \
+        Nlp_i + Nlp_j + LPe_i + LPe_j + LPde_i + LPde_j +  Nlv_i + Nlv_j + \
+        LVe_i + LVe_j + LVde_i + LVde_j + d + BO + Nbn + BNe + BNde + Nbn_ + \
+        BNe_ + BNde_ + I
+    #feature_new5_edge_uNat_depth.insert(0, 'id')
+
     feature_set = [feature_node_uNat,
                   feature_edge_uNat,
                   feature_edge_dNat,
                   feature_node_uNat_depth,
                   feature_edge_uNat_depth,
                   feature_node_dNat_depth,
-                  feature_edge_dNat_depth]
+                  feature_edge_dNat_depth,
+                  feature_new1_edge_uNat_depth,
+                  feature_new2_edge_uNat_depth,
+                  feature_new4_edge_uNat_depth,
+                  feature_new5_edge_uNat_depth
+                  ]
 
     return feature_set
+
+def vector_feature_wholegraph():
+
+    feature_wholegraph = ['feature_charge',
+                'feature_molecular_mass',
+                'feature_n_atoms',
+                'feature_n_electrons']
+
+    feature_wholegraph = []
+
+    # feature heading
+    q =  ['feature_charge']
+    M =  ['feature_molecular_mass']
+    Nat =  ['feature_n_atoms']
+    Ne =  ['feature_n_electrons']
+
+    feature_wholegraph = q + M + Nat + Ne
+
+    return feature_wholegraph

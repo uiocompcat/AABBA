@@ -36,7 +36,7 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     print('new iteratio of the running')
 
     wandb_project_name = target
-    wandb_run_name = f'{ac_type_1}_{walk_1}{walk_2}{walk_3}_d{depth_max}_{property}_e{n_epochs}_b{batch_size}_dnn{dnn}_2HL_seed2022' #'FA_AA_d8_homo_lumo_gap_delta_epoch200_b32'
+    wandb_run_name = f'{ac_type_1}_AABBA_d{depth_max}_{property}_e{n_epochs}_b{batch_size}_dnn{dnn}_2HL_wholegraph' #'FA_AA_d8_homo_lumo_gap_delta_epoch200_b32'
 
     depth_max = depth_max
     ac_type_1 = ac_type_1
@@ -54,11 +54,13 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     wandb.run.name = wandb_run_name
 
     # set seed
-    tools.set_global_seed(seed)
+    #tools.set_global_seed(seed)
 
     # setup data set
     data = pd.read_csv('../data_Vaska/gpVaska_vectors.csv') #gp data            './ac_vectors_target.csv')
-    #dataNBO = pd.read_csv('../nboVaska_vectors.csv') #nbo data                 './ac_vectors_target.csv')
+    #dataNBO = pd.read_csv('../data_Vaska/nboVaska_vectors.csv') #nbo data                 './ac_vectors_target.csv')
+    #dataNBO = pd.read_csv('../data_Vaska/FX_BB_d8_model_refined.csv') #full BB1
+    #data = pd.read_csv('../data_Vaska//FX_BB_d8_model_refined.csv') #gp data 
 
     # input generator
     feature_set_PT_1 = processing_data.vector_feature_PT(depth_max, ac_type_1, model_number_1, walk_1)
@@ -66,10 +68,12 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     feature_set_PT_3 = processing_data.vector_feature_PT(depth_max, ac_type_1, model_number_1, walk_3)
     feature_set_PT_4 = processing_data.vector_feature_PT(depth_max, ac_type_1, model_number_1, walk_1)
 
-    feature_set_NBO_1 = processing_data.vector_feature_NBO(depth_max, ac_type_1, walk_1)
-    feature_set_NBO_2 = processing_data.vector_feature_NBO(depth_max, ac_type_1, walk_2)
-    feature_set_NBO_3 = processing_data.vector_feature_NBO(depth_max, ac_type_1, walk_3)
-    feature_set_NBO_4 = processing_data.vector_feature_NBO(depth_max, ac_type_4, walk_1)
+    feature_set_NBO_1 = processing_data.vector_feature_NBO(depth_max, ac_type_1, model_number_1, walk_1)
+    feature_set_NBO_2 = processing_data.vector_feature_NBO(depth_max, ac_type_1, model_number_1, walk_2)
+    feature_set_NBO_3 = processing_data.vector_feature_NBO(depth_max, ac_type_1, model_number_1, walk_3)
+    feature_set_NBO_4 = processing_data.vector_feature_NBO(depth_max, ac_type_4, model_number_1, walk_1)
+
+    feature_wholegraph = processing_data.vector_feature_wholegraph()
 
     # unpack the feature labels GP/PT
     feature_node_1, feature_edge_1, feature_node_depth_1, feature_edge_depth_1, \
@@ -87,28 +91,41 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     # unpack the feature labels NBO
     feature_node_uNat_1, feature_edge_uNat_1, feature_edge_dNat_1, \
     feature_node_uNat_depth_1, feature_edge_uNat_depth_1, \
-    feature_node_dNat_depth_1, feature_edge_dNat_depth_1 = feature_set_NBO_1
+    feature_node_dNat_depth_1, feature_edge_dNat_depth_1, \
+    feature_new1_edge_uNat_depth_1, feature_new2_edge_uNat_depth_1, \
+    feature_new4_edge_uNat_depth_1, feature_new5_edge_uNat_depth_1 = feature_set_NBO_1
 
     feature_node_uNat_2, feature_edge_uNat_2, feature_edge_dNat_2, \
     feature_node_uNat_depth_2, feature_edge_uNat_depth_2, \
-    feature_node_dNat_depth_2, feature_edge_dNat_depth_2 = feature_set_NBO_2
+    feature_node_dNat_depth_2, feature_edge_dNat_depth_2, \
+    feature_new1_edge_uNat_depth_2, feature_new2_edge_uNat_depth_2, \
+    feature_new4_edge_uNat_depth_2, feature_new5_edge_uNat_depth_2 = feature_set_NBO_2
 
     feature_node_uNat_3, feature_edge_uNat_3, feature_edge_dNat_3,\
     feature_node_uNat_depth_3, feature_edge_uNat_depth_3,\
-    feature_node_dNat_depth_3, feature_edge_dNat_depth_3 = feature_set_NBO_3
+    feature_node_dNat_depth_3, feature_edge_dNat_depth_3, \
+    feature_new1_edge_uNat_depth_3, feature_new2_edge_uNat_depth_3,\
+    feature_new4_edge_uNat_depth_3, feature_new5_edge_uNat_depth_3 = feature_set_NBO_3
 
     feature_node_uNat_4, feature_edge_uNat_4, feature_edge_dNat_4, feature_node_uNat_depth_4, \
-    feature_edge_uNat_depth_4, feature_node_dNat_depth_1, feature_edge_dNat_depth_1 = feature_set_NBO_4
+    feature_edge_uNat_depth_4, feature_node_dNat_depth_1, feature_edge_dNat_depth_1, \
+    feature_new1_edge_uNat_depth_4, feature_new2_edge_uNat_depth_4, \
+    feature_new4_edge_uNat_depth_4, feature_new5_edge_uNat_depth_4 = feature_set_NBO_4
 
     # to remove and add specific features (ABBA_D)
-    CR_MA_AA =  [f'S-{i}_{ac_type_1}_{walk_1}' for i in range(depth_max + 1)]
-    CR_MR_AA =  [f'S-{i}_{ac_type_4}_{walk_1}' for i in range(depth_max + 1)]
-    CR_MA_AB =  [f'S-{i}_{ac_type_1}_{walk_3}' for i in range(depth_max + 1)]
-    CR_MR_AB =  [f'S-{i}_{ac_type_4}_{walk_3}' for i in range(depth_max + 1)]
+    CR_MA_AA =  [f'chi-{i}_{ac_type_1}_{walk_1}' for i in range(depth_max + 1)]
+    CR_MD_AA =  [f'chi-{i}_{ac_type_2}_{walk_1}' for i in range(depth_max + 1)]
+    CR_MA_AB =  [f'chi-{i}_{ac_type_1}_{walk_3}' for i in range(depth_max + 1)]
+    CR_MD_AB =  [f'chi-{i}_{ac_type_2}_{walk_3}' for i in range(depth_max + 1)]
+
+    # global properties
+    #gloabal_feature = ['feature_n_electrons']
 
     # features to use
-    #features_input = feature_node_uNat_depth_1 + feature_edge_uNat_depth_2 + feature_node_uNat_depth_3  #feature_node_depth_1 + feature_edge_depth_2 + feature_node_depth_3 + CR_MR_AA + CR_MR_AB 
-    features_input = feature_node_depth_1 + feature_edge_depth_2 + feature_node_depth_3                  # + CR_MR_AA + CR_MR_AB # - CR_MA_AA - CR_MA_AB  
+    features_input = feature_new3_edge_depth_2 + feature_wholegraph
+    #features_input = feature_node_uNat_depth_1 + feature_edge_uNat_depth_2 + feature_node_uNat_depth_3 + feature_wholegraph #+ gloabal_feature #feature_node_depth_1 + feature_edge_depth_2 + feature_node_depth_3 + CR_MR_AA + CR_MR_AB 
+    #features_input = feature_node_depth_1 + feature_edge_depth_2 + feature_node_depth_3
+    #features_input = feature_node_depth_1 + feature_edge_depth_2 + feature_node_depth_3 + CR_MD_AA + CR_MD_AB 
     #features_input = [i for i in features_input if i not in  CR_MA_AA and i  not in CR_MA_AB]
 
     # select the data
@@ -134,20 +151,21 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     #X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=2022, shuffle=True)
 
     # save train, val and set data, path to save the documents
-    #general_path_csv = f'/mnt/c/Users/lucia/Desktop/phd_stay_Project/Vaskas_project/data/runs/{wandb_run_name}' 
+    #general_path_csv = f'/mnt/c/Users/lucia/Desktop/phd_stay_Project/Vaskas_project/data/runs/{wandb_run_name}'
     #os.mkdir(general_path_csv)
-#    
+ 
     # standard scale subselection
     X_train, mean, std, outliers = processing_data.standarize_train(X_train)
+    print( len(features_input), 'outliers', len(outliers), 'total', len(features_input)-len(outliers))
     X_val = processing_data.standarize_rest(X_val, mean, std, outliers)
     X_test = processing_data.standarize_rest(X_test, mean, std, outliers)
 
-    X_train_csv = X_train.to_csv(f'xtrain_{ac_type_1}_{walk_1}_d{depth_max}_{wandb_project_name}.csv')
-    y_train_csv = y_train.to_csv(f'ytrain_{ac_type_1}_{walk_1}_d{depth_max}_{wandb_project_name}.csv')
-    X_val_csv = X_val.to_csv(f'xval_{ac_type_1}_{walk_1}_d{depth_max}_{wandb_project_name}.csv')
-    y_val_csv = y_val.to_csv(f'yval_{ac_type_1}_{walk_1}_d{depth_max}_{wandb_project_name}.csv')
-    X_test_csv = X_test.to_csv(f'xtest_{ac_type_1}_{walk_1}_d{depth_max}_{wandb_project_name}.csv')
-    y_test_csv = y_test.to_csv(f'ytest_{ac_type_1}_{walk_1}_d{depth_max}_{wandb_project_name}.csv')
+    X_train_csv = X_train.to_csv(f'xtrain_{ac_type_1}_d{depth_max}_{wandb_project_name}.csv')
+    y_train_csv = y_train.to_csv(f'ytrain_{ac_type_1}_d{depth_max}_{wandb_project_name}.csv')
+    X_val_csv = X_val.to_csv(f'xval_{ac_type_1}_d{depth_max}_{wandb_project_name}.csv')
+    y_val_csv = y_val.to_csv(f'yval_{ac_type_1}_d{depth_max}_{wandb_project_name}.csv')
+    X_test_csv = X_test.to_csv(f'xtest_{ac_type_1}_d{depth_max}_{wandb_project_name}.csv')
+    y_test_csv = y_test.to_csv(f'ytest_{ac_type_1}_d{depth_max}_{wandb_project_name}.csv')
 
     print('subset', len(sub), 'train', len(X_train), X_train, 'val', len(X_val), X_val, 'test', len(X_test), X_test)
 
@@ -169,7 +187,6 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     #y_tensor = torch.tensor(target.values.reshape((-1, 1)), dtype=torch.float)
     #dataset = CustomDataset(x_tensor, y_tensor)
 
-    # divide into subsets
     #sets = torch.utils.data.random_split(dataset, [len(dataset) - round(val_set_size * len(dataset)) - round(test_set_size * len(dataset)), round(val_set_size * len(dataset)), round(test_set_size * len(dataset))])
 
     #print('Using ' + str(len(dataset)) + ' data points. (train=' + str(len(sets[0])) + ', val=' + str(len(sets[1])) + ', test=' + str(len(sets[2])) + ')')
@@ -279,11 +296,20 @@ if __name__ == "__main__":
     idx_test = [idx for idx, item in enumerate(file_names) if item in file_name_test]
 
     # run jobs sequentially
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='BBavg', walk_3='AB', target='target_barrier_seed2022', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='BBavg', walk_3='AB', target='gp_target_barrier_ABBA_D1', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='BBavg', walk_3='AB', target='gp_target_barrier_ABBA_D1', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='BBavg', walk_3='AB', target='gp_target_barrier_ABBA_D1', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=2, walk_1='BBavg2', walk_2='BB', walk_3='AB', target='gp_target_barrier_BBavg2', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=2, walk_1='BBavg2', walk_2='BB', walk_3='AB', target='gp_target_barrier_BBavg2', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)        #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
+    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
+    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
+    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
+    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
+    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='BBavg', walk_3='AB', target='test_dim', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
 
     schedule.run_all()
