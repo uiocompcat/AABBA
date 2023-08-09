@@ -1,17 +1,10 @@
-Hei, this is the ML code I have been using. 
-
-This is a Hannes' code and then I made some adaptations to fit our dataset. 
-Hannes suggested that I use wandb (Weights and Biases), 
-which has proven to be very useful for saving DNN results and tracking metrics.
+I use wandb (Weights and Biases), which has proven to be very useful for saving DNN results and tracking metrics.
 
 **ML directory**
 
-I have uploaded the code for perfoming Vaska's complex MLPs.
-For running the MLPs for the tmQMg, check the directory tmqmg_ML.
+Code for perfoming Vaska's complex MLPs.
 
-The main distinction between these MLPs is that while the split is carried out using PyTorch in the case of tmQMg, separation of data has already been established for Vaska's complex. 
-Additionally, I can include a text file containing the names for the train, validation, and test sets for the Vaska's complex. 
-It is worth noting that I maintained the same split throughout all of the experiments.
+The separation of data has already been established for Vaska's complex. 
 
 **File scripts**
 
@@ -28,7 +21,7 @@ It is worth noting that I maintained the same split throughout all of the experi
     ac_type_4: especify the type of autocorrelation function (MR: metal-centered random properties)
     model_number_1: especify the number of the model (1, 2, 3) for the BB1avg, BB2avg, BB3avg features
     walk_1: especify the type of walk (AA: atom-atom correlation)
-    walk_2: especify the type of walk (BBavg: average bond-bond correlation)
+    walk_2: especify the type of walk (BBavg: average bond-bond correlation, BB: superbond correlation, ABBAavg: metal-centered implicit autocorrelation AABBA (II), ABBA: full implicit autocorrelation AABBA (II))
     walk_3: especify the type of walk (AB: atom-bond correlation)
     target: especify the target (target_barrier_seed2022: this is the label that I used to save the model in the project with this name in wandb)
     property: especify the property (target_barrier: the name of the target feature in the dataset)
