@@ -5,45 +5,6 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 
-#data = pd.read_csv('../ac_vectors_target.csv') #'./ac_vectors_target.csv')
-
-#sub = data[['chi-2_ma', 'Z-2_ma', 'I-2_ma', 'T-2_ma', 'S-2_ma']]
-
-#features_input = ['Z-0_FA_AA', 'Z-1_FA_AA', 'Z-2_FA_AA', 'Z-3_FA_AA', 'Z-4_FA_AA', 'Z-5_FA_AA', 'Z-6_FA_AA', 'Z-7_FA_AA','Z-8_FA_AA', \
-#'I-0_FA_AA','I-1_FA_AA', 'I-2_FA_AA', 'I-3_FA_AA', 'I-4_FA_AA', 'I-5_FA_AA', 'I-6_FA_AA', 'I-7_FA_AA', 'I-8_FA_AA',\
-#'T-0_FA_AA', 'T-1_FA_AA', 'T-2_FA_AA', 'T-3_FA_AA', 'T-4_FA_AA',  'T-5_FA_AA', 'T-6_FA_AA', 'T-7_FA_AA', 'T-8_FA_AA', \
-#'S-0_FA_AA', 'S-1_FA_AA', 'S-2_FA_AA', 'S-3_FA_AA', 'S-4_FA_AA', 'S-5_FA_AA', 'S-6_FA_AA', 'S-7_FA_AA', 'S-8_FA_AA',\
-#'chi-0_FA_AA', 'chi-1_FA_AA', 'chi-2_FA_AA', 'chi-3_FA_AA', 'chi-4_FA_AA', 'chi-5_FA_AA', 'chi-6_FA_AA', 'chi-7_FA_AA', 'chi-8_FA_AA'] #['Z-0_MA_AA', 'Z-1_MA_AA', 'I-0_MA_AA', 'I-1_MA_AA', 'T-0_MA_AA', 'T-1_MA_AA', 'S-0_MA_AA', 'S-1_MA_AA','chi-0_MA_AA', 'chi-1_MA_AA']
-
-#features_input = ['Z-0_FA_AA', 'Z-1_FA_AA', 'Z-2_FA_AA',  \
-# 'I-0_MA_AA','I-1_FA_AA', 'I-2_FA_AA', \
-# 'T-0_FA_AA', 'T-1_FA_AA', 'T-2_FA_AA',  \
-#'S-0_FA_AA', 'S-1_FA_AA', 'S-2_FA_AA', \
-#'chi-0_FA_AA', 'chi-1_FA_AA', 'chi-2_FA_AA']
-
-#features_input = ['Z-0_FA_AA', 'Z-1_FA_AA', 'Z-2_FA_AA', 'Z-3_FA_AA', 'Z-4_FA_AA',  'Z-5_FA_AA',\
-# 'I-0_FA_AA','I-1_FA_AA', 'I-2_FA_AA', 'I-3_FA_AA', 'I-4_FA_AA', 'I-5_FA_AA', \
-# 'T-0_FA_AA', 'T-1_FA_AA', 'T-2_FA_AA', 'T-3_FA_AA', 'T-4_FA_AA','T-5_FA_AA', \
-#'S-0_FA_AA', 'S-1_FA_AA', 'S-2_FA_AA', 'S-3_FA_AA', 'S-4_FA_AA', 'S-5_FA_AA', \
-#'chi-0_FA_AA', 'chi-1_FA_AA', 'chi-2_FA_AA', 'chi-3_FA_AA', 'chi-4_FA_AA', 'chi-5_FA_AA']
-
-#sub = data[features_input]
-#sub_ = (sub-sub.mean())/sub.std()
-#sub_array = np.array(sub).T
-
-#target = data['homo_lumo_gap_delta']
-#target_array = np.array(target)
-
-#print(sub_array, '\n')
-#print(sub)
-#print(target_array, '\n')
-#
-#X_train, X_test, y_train, y_test = train_test_split(sub, target, test_size=0.2, random_state=2022, shuffle=True)
-#X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=2022, shuffle=True)
-
-#print(len(sub), len(X_train), len(X_test), len(X_val) )
-#print(X_train)
-
 def standarize_train(data_train):
 
     outlier = []
