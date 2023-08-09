@@ -10,8 +10,6 @@ from trainer import Trainer
 from dataset import CustomDataset
 from plot import plot_correlation, plot_target_histogram
 
-#from sklearn.model_selection import train_test_split
-#from sklearn.preprocessing import StandardScaler
 import processing_data
 from pathlib import Path
 import os
@@ -21,22 +19,19 @@ import schedule
 import time
 
 # PARAMETERS
-wandb_entity = 'lmoran'
-
+wandb_entity = 'name_of_the_user'
 seed = 2022
 learning_rate = 0.01
 batch_size = 32
 n_epochs = 200
 
-#val_set_size = 0.1
-#test_set_size = 0.1
 
 def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_1, walk_1, walk_2, walk_3, target, property, dnn, idx_train, idx_val, idx_test):
 
     print('new iteratio of the running')
 
     wandb_project_name = target
-    wandb_run_name = f'{ac_type_1}_AABBA_d{depth_max}_{property}_e{n_epochs}_b{batch_size}_dnn{dnn}_2HL_wholegraph' #'FA_AA_d8_homo_lumo_gap_delta_epoch200_b32'
+    wandb_run_name = f'custom_d{depth_max}_{property}_e{n_epochs}_b{batch_size}_dnn{dnn}' #'FA_AA_d8_homo_lumo_gap_delta_epoch200_b32'
 
     depth_max = depth_max
     ac_type_1 = ac_type_1
@@ -118,15 +113,9 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     CR_MA_AB =  [f'chi-{i}_{ac_type_1}_{walk_3}' for i in range(depth_max + 1)]
     CR_MD_AB =  [f'chi-{i}_{ac_type_2}_{walk_3}' for i in range(depth_max + 1)]
 
-    # global properties
-    #gloabal_feature = ['feature_n_electrons']
-
     # features to use
-    features_input = feature_new3_edge_depth_2 + feature_wholegraph
-    #features_input = feature_node_uNat_depth_1 + feature_edge_uNat_depth_2 + feature_node_uNat_depth_3 + feature_wholegraph #+ gloabal_feature #feature_node_depth_1 + feature_edge_depth_2 + feature_node_depth_3 + CR_MR_AA + CR_MR_AB 
-    #features_input = feature_node_depth_1 + feature_edge_depth_2 + feature_node_depth_3
-    #features_input = feature_node_depth_1 + feature_edge_depth_2 + feature_node_depth_3 + CR_MD_AA + CR_MD_AB 
-    #features_input = [i for i in features_input if i not in  CR_MA_AA and i  not in CR_MA_AB]
+    features_input = feature_new3_edge_depth_2 #+ feature_wholegraph
+    #features_input = feature_node_uNat_depth_1 + feature_edge_uNat_depth_2 + feature_node_uNat_depth_3 + feature_wholegraph #+ gloabal_feature #feature_node_depth_1 + 
 
     # select the data
     sub = data[features_input]
@@ -146,13 +135,6 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     print('train', X_train, y_train)
     print('val', X_val, y_val)
     print('test', X_test, y_test)
-
-    #X_train, X_test, y_train, y_test = train_test_split(sub, target, test_size=0.2, train_size=0.8, random_state=2022, shuffle=True)
-    #X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=2022, shuffle=True)
-
-    # save train, val and set data, path to save the documents
-    #general_path_csv = f'/mnt/c/Users/lucia/Desktop/phd_stay_Project/Vaskas_project/data/runs/{wandb_run_name}'
-    #os.mkdir(general_path_csv)
  
     # standard scale subselection
     X_train, mean, std, outliers = processing_data.standarize_train(X_train)
@@ -182,21 +164,9 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
     y_test_torch = torch.tensor(y_test.values.reshape((-1, 1)), dtype=torch.float)
     dataset_test = CustomDataset(X_test_torch, y_test_torch)
 
-    # divide into subsets for tmQMg
-    #x_tensor = torch.tensor(sub.values, dtype=torch.float)
-    #y_tensor = torch.tensor(target.values.reshape((-1, 1)), dtype=torch.float)
-    #dataset = CustomDataset(x_tensor, y_tensor)
-
-    #sets = torch.utils.data.random_split(dataset, [len(dataset) - round(val_set_size * len(dataset)) - round(test_set_size * len(dataset)), round(val_set_size * len(dataset)), round(test_set_size * len(dataset))])
-
-    #print('Using ' + str(len(dataset)) + ' data points. (train=' + str(len(sets[0])) + ', val=' + str(len(sets[1])) + ', test=' + str(len(sets[2])) + ')')
     print('Using ' + str(len(sub)) + ' data points. (train=' + str(len(X_train_torch)) + ', val=' + str(len(X_val_torch)) + ', test=' + str(len(X_test_torch)) + ')')
 
-    # set up dataloaders for tmQMg
-    #train_loader = DataLoader(sets[0], batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
-    #train_loader_unshuffled = DataLoader(sets[0], batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True)
-    #val_loader = DataLoader(sets[1], batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True)
-    #test_loader = DataLoader(sets[2], batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True)
+    # set up dataloaders for Vaska's dataset
 
     train_loader = DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
     train_loader_unshuffled = DataLoader(dataset_train, batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True)
@@ -209,7 +179,8 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
         hidden_nodes = 256
 
     # set up model
-    model = ExampleNet(input_nodes=len(features_input)-len(outliers), hidden_nodes=hidden_nodes, output_nodes=1)  #+len(feature_node_NBO)
+    model = ExampleNet(input_nodes=len(features_input)-len(outliers), hidden_nodes=hidden_nodes, output_nodes=1)
+
     # set up optimizer and scheduler
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.7, patience=5, min_lr=0.00001)
@@ -274,17 +245,12 @@ def run_job(depth_max, ac_type_1, ac_type_2, ac_type_3, ac_type_4, model_number_
 
 if __name__ == "__main__":
 
-    general_path = '/mnt/c/Users/lucia/Desktop/phd_stay_Project/Vaskas_project/'
+    general_path = '(..)/Vaskas_project/'
 
-    path_to_all = general_path + 'Vaskas_uNatQ_graphs/uNatQ_graphs'
-    path_to_train = general_path + 'Vaskas_uNatQ_graphs_split/train/uNatQ_graphs'
-    path_to_val = general_path + 'Vaskas_uNatQ_graphs_split/val/uNatQ_graphs'
-    path_to_test = general_path + 'Vaskas_uNatQ_graphs_split/test/uNatQ_graphs'
-
-    #path_to_all = general_path + 'baseline_graphs'
-    #path_to_train = general_path + 'baseline_graphs_split/train'
-    #path_to_val = general_path + 'baseline_graphs_split/val'
-    #path_to_test = general_path + 'baseline_graphs_split/test'
+    path_to_all = general_path + 'baseline_graphs'
+    path_to_train = general_path + 'baseline_graphs_split/train'
+    path_to_val = general_path + 'baseline_graphs_split/val'
+    path_to_test = general_path + 'baseline_graphs_split/test'
 
     file_names = [f'{file[:-4]}' for file in os.listdir(path_to_all) if file.endswith('.gml')]
     file_name_train = [f'{file[:-4]}' for file in os.listdir(path_to_train) if file.endswith('.gml')]
@@ -296,20 +262,6 @@ if __name__ == "__main__":
     idx_test = [idx for idx, item in enumerate(file_names) if item in file_name_test]
 
     # run jobs sequentially
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
-    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='ABBAavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)        #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='FA', ac_type_2='FD', ac_type_3='FS', ac_type_4='FR', model_number_1=3, walk_1='AA', walk_2='BB', walk_3='AB', target='nbo_target_barrier_F3_wholeprop', property='target_barrier', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
-    #schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='BBavg', walk_3='AB', target='test_dim', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)
+    schedule.every(20).minutes.do(run_job, depth_max=3, ac_type_1='MA', ac_type_2='MD', ac_type_3='MS', ac_type_4='MR', model_number_1=3, walk_1='AA', walk_2='BBavg', walk_3='AB', target='gp_target_distance_MC3_wholegraph_randomsplit', property='target_distance', dnn=1, idx_train=idx_train, idx_val=idx_val, idx_test=idx_test)    
 
     schedule.run_all()
