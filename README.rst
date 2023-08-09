@@ -4,8 +4,8 @@ ABBA
 
 .. project-description-start
 
-ABBA is a Python library for applying autocorrelation (AC) functions. It
-provides a fixed-length vector which combines generic properties (GP) and 
+AABBA is a Graph Kernel Python library for applying autocorrelation (AC) functions.
+It transforms molecular graphs into a fixed-length vector that combines generic properties (GP) and 
 natural bond orbital (NBO) properties. 
 
 **Generic properties (GP) and periodic-table (PT) features are employed indistinctly.
@@ -43,7 +43,7 @@ Manipulate **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
         +----------+-------------------------------------------+
         | ac_operator (str)                                    |
         +=========+============================================+
-        | MA      | metal-centered autocorrelation             |
+        | MA      | metal-centered product autocorrelation     |
         +---------+--------------------------------------------+
         | MD      | metal-centered deltametric autocorrelation |
         +---------+--------------------------------------------+
@@ -51,7 +51,7 @@ Manipulate **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
         +---------+--------------------------------------------+
         | MR      | metal-centered ratiometric autocorrelation |
         +---------+--------------------------------------------+
-        | FA      | full autocorrelation                       |
+        | FA      | full product autocorrelation               |
         +---------+--------------------------------------------+
         | FD      | full deltametric autocorrelation           |
         +---------+--------------------------------------------+
@@ -64,21 +64,23 @@ Manipulate **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
 
         - walk: types of autocorrelation. The different modes to read the chemical graph.
 
-        +---------------+------------------------------------------------------------------------------+
-        | walk variable  (str)                                                                         |
-        +===============+==============================================================================+
-        | AA            | atom-atom correlation                                                        |
-        +---------------+------------------------------------------------------------------------------+
-        | BBavg         | bond-bond autocorrelation with bond average (only MC)                        |
-        +---------------+------------------------------------------------------------------------------+
-        | BB            | bond-bond autocorrelation with superbond (for MC), and full bond-bond (F)    |
-        +---------------+------------------------------------------------------------------------------+
-        | AB            | bond-atom autocorrelation                                                    |
-        +---------------+------------------------------------------------------------------------------+
-        | nBB           | new bond-bond autocorrelation (only for PT features)                         |
-        +---------------+------------------------------------------------------------------------------+
+        +---------------+----------------------------------------------------------------------------------------+
+        | walk variable  (str)                                                                                   |
+        +===============+========================================================================================+
+        | AA            | atom-atom correlation                                                                  |
+        +---------------+----------------------------------------------------------------------------------------+
+        | BBavg         | bond-bond autocorrelation with bond average (only MC)                                  |
+        +---------------+----------------------------------------------------------------------------------------+
+        | BB            | bond-bond autocorrelation with superbond (for MC), and with full bond-bond (F)         |
+        +---------------+----------------------------------------------------------------------------------------+
+        | AB            | bond-atom autocorrelation                                                              |
+        +---------------+----------------------------------------------------------------------------------------+
+        | ABBAavg       | implicit autocorrelation with bond average (only MC); select the model 1, 2, 3, 4, 5   |
+        +---------------+----------------------------------------------------------------------------------------+
+        | ABBA          | implicit autocorrelation with individual bond (only F); select the model 1, 2, 3, 4, 5 |
+        +---------------+----------------------------------------------------------------------------------------+
 
-        - model_number: to be performed only with periodic table features (PT). The attributes of the nodes contain the following features:
+        - model_number: 1, 2, 3 to be performed with periodic table features (PT); and 4, 5 to be performed with nbo features (NBO). The attributes contain the following features:
         
         +----------+------------------------------------------------------------------------------------------------------------------------------------------------------------------+
         | model_number (str)                                                                                                                                                          |        
