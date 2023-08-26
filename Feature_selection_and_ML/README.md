@@ -1,5 +1,5 @@
 # Feature selection and ML
-## Feature selection code and dense neural network and gaussian process models and associated training procedures.
+## Feature selection code, dense neural network and gaussian process models and associated training procedures.
 ### Example application using the AABBA autocorrelation vectors
 This is an example where the dimensionalities of large AABBA autocorrelation vectors were reduced with respect to relevance calculated from Gradient Boosting Machines (GBMs). The resulting reduced autocorrelation vectors were used as inputs to dense neural networks and gaussian processes, demonstrating the effectiveness of this approach. 
 ### Feature selection
