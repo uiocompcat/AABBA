@@ -15,3 +15,4 @@ gaussian_process_run.py - contains code specifying the training procedure for th
 - PyTorch version 1.13: pip install pytorch
 - scikit-learn version 1.1.2: pip install scikit-learn
 - pandas version 1.4.4: pip install pandas
+- tqdm version 4.64.0: pip install tqdm
