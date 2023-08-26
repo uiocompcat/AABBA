@@ -1,0 +1,39 @@
+from pathlib import Path
+import os
+import csv
+
+general_path = '/mnt/c/Users/lucia/Desktop/phd_stay_Project/Vaskas_project/'
+
+path_to_all = general_path + 'Vaskas_uNatQ_graphs/uNatQ_graphs'
+path_to_train = general_path + 'Vaskas_uNatQ_graphs_split/train/uNatQ_graphs'
+path_to_val = general_path + 'Vaskas_uNatQ_graphs_split/val/uNatQ_graphs'
+path_to_test = general_path + 'Vaskas_uNatQ_graphs_split/test/uNatQ_graphs'
+
+file_names = [f'{file[:-4]}' for file in os.listdir(path_to_all) if file.endswith('.gml')]
+file_name_train = [f'{file[:-4]}' for file in os.listdir(path_to_train) if file.endswith('.gml')]
+file_name_val = [f'{file[:-4]}' for file in os.listdir(path_to_val) if file.endswith('.gml')]
+file_name_test = [f'{file[:-4]}' for file in os.listdir(path_to_test) if file.endswith('.gml')]
+
+# export list of names to csv file and add the names in separate rows
+with open('file_names.csv', 'w', newline='') as myfile:
+    wr = csv.writer(myfile)
+    for i in file_names:
+        wr.writerow([i])
+        #wr.writerow(file_names)
+
+with open('file_name_train.csv', 'w', newline='') as myfile:
+    wr = csv.writer(myfile)
+    for i in file_name_train:
+        wr.writerow([i])
+
+with open('file_name_val.csv', 'w', newline='') as myfile:
+    wr = csv.writer(myfile)
+    for i in file_name_val:
+        wr.writerow([i])
+
+with open('file_name_test.csv', 'w', newline='') as myfile:
+    wr = csv.writer(myfile)
+    for i in file_name_test:
+        wr.writerow([i])
+
+
