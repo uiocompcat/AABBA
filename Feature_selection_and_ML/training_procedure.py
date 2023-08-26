@@ -1,7 +1,7 @@
 from training_procedures import MLPTrainer
 import torch
 import pandas as pd
-from models import MLP, train_and_test, ExampleNet
+from models import DNN
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
 import tqdm
@@ -82,7 +82,7 @@ test_loader = DataLoader(dataset_test, batch_size=batch_size, shuffle=False, num
 learning_rate = 0.01
 
 
-model = ExampleNet(input_nodes=n_features, hidden_nodes=128, output_nodes=1)  #+len(feature_node_NBO)
+model = DNN(input_nodes=n_features, hidden_nodes=128, output_nodes=1)  #+len(feature_node_NBO)
 # set up optimizer and scheduler
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.7, patience=5, min_lr=0.00001)
