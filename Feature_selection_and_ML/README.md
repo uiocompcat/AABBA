@@ -8,3 +8,10 @@ feature_selection_runs.py - contains code for an example run of the GBM model on
 dnn_runs.py - contains code specifying the training procedure for the DNN runs with different accumulated relevance input as calculated from the GBM. 
 ### Gaussian processes
 gaussian_process_run.py - contains code specifying the training procedure for the gaussian processes, where you only need to specify accumulated relevance and type of input.
+
+
+### Requirements
+- GPyTorch version 1.9: pip install gpytorch
+- PyTorch version 1.13: pip install pytorch
+- scikit-learn version 1.1.2: pip install scikit-learn
+- pandas version 1.4.4: pip install pandas
