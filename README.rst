@@ -22,9 +22,9 @@ Scripts
 -------
 * graph_info.py - read the chemical graph and extract the indexes of the nodes and edges at different depths. It also provides the labels of the features.
 * ac_functions.py - perform the autocorrelation functions.
-* utilities - tools for manipulating the data.
-* ac_PT_multithread - parallel implementation to perform the autocorrelation functions with periodic-table features.
-* ac_NBO_multithread - parallel implementation to perform the autocorrelation functions with nbo features.
+* utilities.py - tools for manipulating the data.
+* ac_PT_multithread.py - parallel implementation to perform the autocorrelation functions with periodic-table features.
+* ac_NBO_multithread.py - parallel implementation to perform the autocorrelation functions with nbo features.
 
 How to use
 ----------
