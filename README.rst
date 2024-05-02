@@ -80,6 +80,11 @@ Manipulate **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
         | ABBA          | implicit autocorrelation with individual bond (only F); select the model 1, 2, 3, 4, 5 |
         +---------------+----------------------------------------------------------------------------------------+
 
+        **According to the article: 
+
+            AABBA(I) = AA ⊕ BBavg ⊕ AB, therefore, it is necessary to obtain them separately, (i.e. first AA, then BBavg, and AB) and concatenate them afterwards. // 
+            AABBA(II) is obtained using AABBAavg and ABBA in the code. We also need to indicate the model number to obtain each of the different five possibilities. 
+
         - model_number: 1, 2, 3 to be performed with periodic table features (PT); and 4, 5 to be performed with nbo features (NBO). The attributes contain the following features:
         
         +----------+------------------------------------------------------------------------------------------------------------------------------------------------------------------+
