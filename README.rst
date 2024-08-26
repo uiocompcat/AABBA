@@ -4,7 +4,7 @@ AABBA
 
 .. project-description-start
 
-AABBA is a Graph Kernel Python library for applying autocorrelation (AC) functions.
+AABBA is a Graph Kernel Python library for applying autocorrelation (AC) functions..
 It transforms molecular graphs into a fixed-length vector that combines generic properties (GP) and 
 natural bond orbital (NBO) properties. 
 
