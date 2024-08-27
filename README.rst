@@ -4,11 +4,11 @@ AABBA
 
 .. project-description-start
 
-AABBA is a Graph Kernel Python library for applying autocorrelation (AC) functions..
+AABBA is a Graph Kernel Python library for applying autocorrelation (AC) functions.
 It transforms molecular graphs into a fixed-length vector that combines generic properties (GP) and 
 natural bond orbital (NBO) properties. 
 
-**Generic properties (GP) and periodic-table (PT) features are employed indistinctly.
+*NB! Generic properties (GP) and periodic-table (PT) features are employed indistinctly.*
 
 .. project-description-end
 
@@ -34,11 +34,11 @@ Clone the code.
 
 Install the requirements.
 
-Manipulate **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
+Define the AABBA parameters in the first lines of **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
 
-        1) Select the parameters to perform the autocorrelation functions.
+        1) Select the parameters to perform the autocorrelation functions accordingly:
 
-        - ac_operator: arithmetic operator applied to the properties. 
+        - **ac_operator**: origin of the autocorrelation (M or F) and arithmetic operator (A, D, S, R) applied to the properties. 
 
         +----------+-------------------------------------------+
         | ac_operator (str)                                    |
@@ -60,32 +60,33 @@ Manipulate **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
         | FR      | full ratiometric autocorrelation           |
         +---------+--------------------------------------------+
         
-        **MC refers to metal-centered autocorrelation and F refers to full autocorrelation
+        *NB! MC refers to metal-centered autocorrelation and F refers to full autocorrelation.*
 
-        - walk: types of autocorrelation. The different modes to read the chemical graph.
+        - **walk**: types of autocorrelation. The different modes to read the chemical graph.
 
-        +---------------+----------------------------------------------------------------------------------------+
-        | walk variable  (str)                                                                                   |
-        +===============+========================================================================================+
-        | AA            | atom-atom correlation                                                                  |
-        +---------------+----------------------------------------------------------------------------------------+
-        | BBavg         | bond-bond autocorrelation with bond average (only MC)                                  |
-        +---------------+----------------------------------------------------------------------------------------+
-        | BB            | bond-bond autocorrelation with superbond (for MC), and with full bond-bond (F)         |
-        +---------------+----------------------------------------------------------------------------------------+
-        | AB            | bond-atom autocorrelation                                                              |
-        +---------------+----------------------------------------------------------------------------------------+
-        | ABBAavg       | implicit autocorrelation with bond average (only MC); select the model 1, 2, 3, 4, 5   |
-        +---------------+----------------------------------------------------------------------------------------+
-        | ABBA          | implicit autocorrelation with individual bond (only F); select the model 1, 2, 3, 4, 5 |
-        +---------------+----------------------------------------------------------------------------------------+
+        +---------------+---------------------------------------------------------------------------------------------------+
+        | walk variable  (str)                                                                                              |
+        +===============+===================================================================================================+
+        | AA            | atom-atom correlation                                                                             |
+        +---------------+---------------------------------------------------------------------------------------------------+
+        | BBavg         | bond-bond autocorrelation with averaging-superbond (only for MC)                                  |
+        +---------------+---------------------------------------------------------------------------------------------------+
+        | BB            | bond-bond autocorrelation with summing-superbond (for MC), and with full bond-bond (F)            |
+        +---------------+---------------------------------------------------------------------------------------------------+
+        | AB            | bond-atom autocorrelation                                                                         |
+        +---------------+---------------------------------------------------------------------------------------------------+
+        | ABBAavg       | implicit autocorrelation with averaging-superbond (only for MC); select the model 1, 2, 3, 4, 5   |
+        +---------------+---------------------------------------------------------------------------------------------------+
+        | ABBA          | implicit autocorrelation with individual bond (only for F); select the model 1, 2, 3, 4, 5        |
+        +---------------+---------------------------------------------------------------------------------------------------+
 
-        **According to the article: 
+        *NB! According to the article:*
 
-            AABBA(I) = AA ⊕ BBavg ⊕ AB, therefore, it is necessary to obtain them separately, (i.e. first AA, then BBavg, and AB) and concatenate them afterwards. // 
-            AABBA(II) is obtained using AABBAavg and ABBA in the code. We also need to indicate the model number to obtain each of the different five possibilities. 
+            *AABBA(I) = AA ⊕ BBavg ⊕ AB, therefore, it is necessary to obtain them separately, (i.e. first AA, then BBavg, and AB) and concatenate them afterwards.* 
 
-        - model_number: 1, 2, 3 to be performed with periodic table features (PT); and 4, 5 to be performed with nbo features (NBO). The attributes contain the following features:
+            *AABBA(II) is obtained using AABBAavg and ABBA in the code. We also need to indicate the model number to obtain each of the different five possibilities*
+
+        - **model_number**: 1, 2, 3 to be performed with periodic table features (PT); and 4, 5 to be performed with nbo features (NBO). The attributes contain the following features:
         
         +----------+------------------------------------------------------------------------------------------------------------------------------------------------------------------+
         | model_number (str)                                                                                                                                                          |        
@@ -103,29 +104,36 @@ Manipulate **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
         |        | NLV\ :sub:`i`, NLV\ :sub:`j`, LVE\ :sub:`i`, LVE\ :sub:`j`, LV∆E\ :sub:`i`, LV∆E\ :sub:`j`, BD, BONat, NBN , BNE , BN∆E , NBN∗ , BN∗E , BN∗∆E , I                  |
         +--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-
         (i and j are the nodes of the edges)
 
-        - depth_max (int): maximum depth of the autocorrelation function.
-
-|
-
-        2) Select the autocorrelation function to be performed and its return vector. Comment the rest of the functions.
-
-|
-
-        3) Select the feature type (feature_type)
-
-|
-
-        4) Adjust the path to the folder that contains the .gml files (path_to_gml).
-
-|
-
-        5) Create a folder to save the results (path_to_folder).
+        - **depth_max** (int): maximum depth of the autocorrelation function.
 
 
+The graphs (.gml files) are stored in the folllowing directories:
+
+- 'PT_graphs' for generic property graphs.
+
+- 'uNatQ_graphs' for NBO property graphs.
+
+If the location of these folders is different, adjust the path_to_gml variable in your script accordingly.
+
+Resulting Vectors: The vectors generated from processing the graphs are saved in the 'vectors_ABBA' folder.
 
 
+Code Configuration and Customization
+------------------------------------
+This code is designed to work with graphs extracted from https://github.com/uiocompcat/HyDGL. If you have graphs with different properties or need to customize certain aspects, follow these steps:
+
+- Adjust Graph Properties:
+File: **graph_info.py**. Define and adjust the properties and features of your graphs according to your requirements.
+
+- Customize Decimal Precision:
+File: **utilities.py**. Modify how decimals are rounded to meet your specific needs.
+
+Ensure that these customizations align with the rest of your code to maintain compatibility and accuracy.
+
+Contact 
+-------
+l.m.gonzalez@smn.uio.no
 
 
