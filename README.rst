@@ -132,6 +132,12 @@ File: **utilities.py**. Modify how decimals are rounded to meet your specific ne
 
 Ensure that these customizations align with the rest of your code to maintain compatibility and accuracy.
 
+For more information, please refer to the preprint: 
+
+Citation 
+--------
+Morán-González L, Betten JE, Kneiding H, Balcells D. AABBA: Atom–Atom Bond–Bond Bond–Atom Graph Kernel for Machine Learning on Molecules and Materials. ChemRxiv. 2023; doi:10.26434/chemrxiv-2023-5wbkr
+
 Contact 
 -------
 l.m.gonzalez@smn.uio.no
