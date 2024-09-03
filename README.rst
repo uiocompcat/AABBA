@@ -36,7 +36,7 @@ Install the requirements.
 
 Define the AABBA parameters in the first lines of **ac_NBO_multithread.py** and **ac_PT_multithread.py** files:
 
-        1) Select the parameters to perform the autocorrelation functions accordingly:
+        1) Select the parameters to perform the autocorrelation functions accordingly ("PARAMS" dictionary). 
 
         - **ac_operator**: origin of the autocorrelation (M or F) and arithmetic operator (A, D, S, R) applied to the properties. 
 
@@ -64,21 +64,21 @@ Define the AABBA parameters in the first lines of **ac_NBO_multithread.py** and 
 
         - **walk**: types of autocorrelation. The different modes to read the chemical graph.
 
-        +---------------+---------------------------------------------------------------------------------------------------+
-        | walk variable  (str)                                                                                              |
-        +===============+===================================================================================================+
-        | AA            | atom-atom correlation                                                                             |
-        +---------------+---------------------------------------------------------------------------------------------------+
-        | BBavg         | bond-bond autocorrelation with averaging-superbond (only for MC)                                  |
-        +---------------+---------------------------------------------------------------------------------------------------+
-        | BB            | bond-bond autocorrelation with summing-superbond (for MC), and with full bond-bond (F)            |
-        +---------------+---------------------------------------------------------------------------------------------------+
-        | AB            | bond-atom autocorrelation                                                                         |
-        +---------------+---------------------------------------------------------------------------------------------------+
-        | ABBAavg       | implicit autocorrelation with averaging-superbond (only for MC); select the model 1, 2, 3, 4, 5   |
-        +---------------+---------------------------------------------------------------------------------------------------+
-        | ABBA          | implicit autocorrelation with individual bond (only for F); select the model 1, 2, 3, 4, 5        |
-        +---------------+---------------------------------------------------------------------------------------------------+
+        +---------------+---------------------------------------------------------------------------------------------------------------+
+        | walk variable  (str)                                                                                                          |
+        +===============+===============================================================================================================+
+        | AA            | atom-atom correlation                                                                                         |
+        +---------------+---------------------------------------------------------------------------------------------------------------+
+        | BBavg         | bond-bond autocorrelation with averaging-superbond (only for MC)                                              |
+        +---------------+---------------------------------------------------------------------------------------------------------------+
+        | BB            | bond-bond autocorrelation with summing-superbond (for MC), and with full bond-bond (F)                        |
+        +---------------+---------------------------------------------------------------------------------------------------------------+
+        | AB            | bond-atom autocorrelation                                                                                     |
+        +---------------+---------------------------------------------------------------------------------------------------------------+
+        | ABBAavg       | implicit autocorrelation, AABBA(II), with averaging-superbond (only for MC); select the model 1, 2, 3, 4, 5   |
+        +---------------+---------------------------------------------------------------------------------------------------------------+
+        | ABBA          | implicit autocorrelation, AABBA(II), with individual bond (only for F); select the model 1, 2, 3, 4, 5        |
+        +---------------+---------------------------------------------------------------------------------------------------------------+
 
         *NB! According to the article:*
 
@@ -132,7 +132,11 @@ File: **utilities.py**. Modify how decimals are rounded to meet your specific ne
 
 Ensure that these customizations align with the rest of your code to maintain compatibility and accuracy.
 
-For more information, please refer to the preprint: 
+For more information, please refer to the preprint: doi:10.26434/chemrxiv-2023-5wbkr
+
+Feature_selection_and_ML
+------------------------
+The folder contains the necessary files for running the GBM and GPs. 
 
 Citation 
 --------
