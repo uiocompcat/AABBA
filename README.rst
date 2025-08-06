@@ -132,7 +132,7 @@ File: **utilities.py**. Modify how decimals are rounded to meet your specific ne
 
 Ensure that these customizations align with the rest of your code to maintain compatibility and accuracy.
 
-For more information, please refer to the preprint: doi:10.26434/chemrxiv-2023-5wbkr
+For more information, please refer to the publication: doi:10.1021/acs.jcim.4c01583
 
 Feature_selection_and_ML
 ------------------------
@@ -140,10 +140,10 @@ The folder contains the necessary files for running the GBM and GPs.
 
 Citation 
 --------
-Morán-González L, Betten JE, Kneiding H, Balcells D. AABBA: Atom–Atom Bond–Bond Bond–Atom Graph Kernel for Machine Learning on Molecules and Materials. ChemRxiv. 2023; doi:10.26434/chemrxiv-2023-5wbkr
+Morán-González L, Betten JE, Kneiding H, Balcells D. AABBA Graph Kernel: Atom-Atom, Bond-Bond, and Bond-Atom Autocorrelations for Machine Learning, J. Chem. Inf. Model. 2024, 64, 23, 8756–8769, https://doi.org/10.1021/acs.jcim.4c01583
 
 Contact 
 -------
-l.m.gonzalez@smn.uio.no
+l.m.gonzalez@kjemi.uio.no
 
 
